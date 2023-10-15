@@ -181,18 +181,20 @@ class AConvGNN(nn.Module):
 
         return outputs
 
-    def generate_markdown(
+    def generate_one_markdown(
         self,
         source,
         source_ast_nodes, source_ast_edges, batch_index,
         start_idx,
         device,
-        sequence_length=50
+        eos_ind,
+        sequence_max_length=50,
         ):
         batch_size = source.shape[1]
+        assert batch_size == 1, "batch size must be 1"
 
         outputs = torch.zeros(
-            sequence_length, batch_size,
+            sequence_max_length,
         ).to(device)
 
         code_seq_states, code_seq_hidden = self.code_seq_encoder(source)
@@ -202,10 +204,13 @@ class AConvGNN(nn.Module):
         x = torch.ones(batch_size) * start_idx
         x = x.to(device).long()
         outputs[0] = x
-
-        for t in range(1, sequence_length):
+        sequence_length = 1
+        for t in range(1, sequence_max_length):
             output, hidden = self.document_decoder(x, code_seq_states, code_ast_states, hidden)
             x = output.argmax(1)
             outputs[t] = x
+            sequence_length = t + 1
+            if outputs[t] == eos_ind:
+                break
 
-        return outputs
+        return outputs[:sequence_length]
