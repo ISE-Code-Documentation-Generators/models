@@ -98,14 +98,16 @@ class BeforeRNNAttention(nn.Module):
 class DocumentDecoder(nn.Module):
     def __init__(
             self, vocab_size, embedding_size, hidden_size, p,
-            code_seq_attention, code_ast_attention,
+            code_seq_attention, code_ast_attention, use_glove=True,
     ):
         super().__init__()
         self.dropout = nn.Dropout(p)
-        glove = vocab.GloVe(name='6B', dim=embedding_size)
-        glove_weights = torch.FloatTensor(glove.vectors)
-        self.embedding = nn.Embedding.from_pretrained(glove_weights, freeze=False)
-        # self.embedding = nn.Embedding(vocab_size, embedding_size)
+        if use_glove:
+            glove = vocab.GloVe(name='6B', dim=embedding_size)
+            glove_weights = torch.FloatTensor(glove.vectors)
+            self.embedding = nn.Embedding.from_pretrained(glove_weights, freeze=False)
+        else:
+            self.embedding = nn.Embedding(vocab_size, embedding_size)
         self.gru = nn.GRU(
             hidden_size * 2 + embedding_size, hidden_size * 2,
         )
@@ -134,7 +136,7 @@ class AConvGNN(nn.Module):
             self,
             src_vocab_size, src_embedding_size,
             md_vocab_size, md_embedding_size,
-            hidden_size,
+            hidden_size, use_glove=True,
     ):
         super().__init__()
         src_embedding = nn.Embedding(src_vocab_size, src_embedding_size)
@@ -149,6 +151,7 @@ class AConvGNN(nn.Module):
             md_vocab_size, md_embedding_size, hidden_size, .5,
             BeforeRNNAttention(hidden_size, 2 * hidden_size),
             BeforeRNNAttention(hidden_size, 2 * hidden_size),
+            use_glove=use_glove,
         )
 
     def forward(
