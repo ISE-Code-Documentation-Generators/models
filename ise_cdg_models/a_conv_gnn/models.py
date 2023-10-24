@@ -186,12 +186,11 @@ class AConvGNN(nn.Module):
 
     def generate_one_markdown(
         self,
-        source,
-        source_ast_nodes, source_ast_edges, batch_index,
-        start_idx,
-        device,
-        eos_ind,
-        sequence_max_length=50,
+        source: torch.Tensor,
+        source_ast_nodes: torch.Tensor, source_ast_edges: torch.Tensor, batch_index: torch.Tensor,
+        start_ind: int, eos_ind: int,
+        sequence_max_length: int,
+        device: torch.device,
         ):
         batch_size = source.shape[1]
         assert batch_size == 1, "batch size must be 1"
@@ -204,7 +203,7 @@ class AConvGNN(nn.Module):
         code_ast_states, code_ast_hidden = self.code_ast_encoder(source_ast_nodes, source_ast_edges, batch_index)
         hidden = torch.cat((code_seq_hidden, code_ast_hidden), dim=2)
 
-        x = torch.ones(batch_size) * start_idx
+        x = torch.ones(batch_size) * start_ind
         x = x.to(device).long()
         outputs[0] = x
         sequence_length = 1
