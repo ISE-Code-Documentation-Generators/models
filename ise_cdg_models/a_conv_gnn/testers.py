@@ -1,6 +1,6 @@
 import abc
 import typing
-from typing import List, Dict
+from typing import List, Dict, Callable
 
 import torch
 from torch.utils.data import Dataset
@@ -41,7 +41,7 @@ class AConvGNNTesterOnDataset:
     def start_testing(
             self,
             metrics_with_name: Dict[str, MetricInterface],
-            dataset_id_generator: typing.Generator,
+            dataset_id_generator: Callable,
             sos_ind: int, eos_ind: int,
             device: torch.device,
     ):
@@ -50,7 +50,7 @@ class AConvGNNTesterOnDataset:
         with torch.no_grad():
             candidates = []
             mds = []
-            for i in dataset_id_generator:
+            for i in dataset_id_generator():
                 src, md = self.dataset[i]
                 src = src.unsqueeze(1).to(device)
                 data2 = self.geo_dataset[i]
