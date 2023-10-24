@@ -27,7 +27,7 @@ class AConvGNNTesterOnDataset:
     def __init__(
             self, 
             name: str,
-            model: AConvGNN,
+            model: 'AConvGNN',
             dataset: Dataset, 
             geo_dataset: Dataset,
             printer = print,
