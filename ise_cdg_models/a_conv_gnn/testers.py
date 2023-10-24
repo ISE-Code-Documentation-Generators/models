@@ -5,7 +5,6 @@ from typing import List, Dict
 import torch
 from torch.utils.data import Dataset
 
-from tqdm import tqdm
 
 if typing.TYPE_CHECKING:
     from ise_cdg_models.a_conv_gnn.models import AConvGNN
