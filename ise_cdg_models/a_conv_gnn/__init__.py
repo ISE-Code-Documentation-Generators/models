@@ -1,2 +1,2 @@
-from models import AConvGNN
-from testers import AConvGNNTesterOnDataset
+from .models import AConvGNN
+from .testers import AConvGNNTesterOnDataset
