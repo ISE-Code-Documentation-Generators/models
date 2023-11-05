@@ -4,7 +4,7 @@ from torch import nn
 
 
 class SourceImageCNN(nn.Module):
-    def __init__(self, output_size, conv_flatten_size):
+    def __init__(self, context_size, conv_flatten_size):
       super().__init__()
 
       convolution_properties = {'padding':(1, 0, 0), 'kernel_size':(3, 17, 17), 'stride':(1, 1, 1), 'dilation':(1, 1, 1)}
@@ -23,7 +23,7 @@ class SourceImageCNN(nn.Module):
       # see the forward function to understand the shapes
       self.fc1 = nn.Linear(conv_flatten_size, 2048)
       self.fc2 = nn.Linear(2048, 512)
-      self.fc3 = nn.Linear(512, output_size)
+      self.fc3 = nn.Linear(512, context_size)
 
       """
         - makes the frame size half.
@@ -54,4 +54,4 @@ class SourceImageCNN(nn.Module):
         x = self.relu(self.fc1(x))
         x = self.relu(self.fc2(x))
         x = self.relu(self.fc3(x))
-        return self.dropout(x)  # shape: (batch, embed_size)
+        return self.dropout(x)  # shape: (batch, encoder_context_size)
