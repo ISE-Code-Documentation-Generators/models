@@ -1,0 +1,2 @@
+class DocumentRNN(nn.Module):
+    
