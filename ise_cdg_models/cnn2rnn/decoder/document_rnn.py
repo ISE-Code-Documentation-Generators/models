@@ -2,7 +2,7 @@ import torch
 from torch import nn
 from torchtext import vocab
 
-class DocumentRNN(nn.Module):
+class DocumentDecoder(nn.Module):
 
     def __init__(
             self, 

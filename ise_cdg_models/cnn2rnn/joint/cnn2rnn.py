@@ -1,36 +1,31 @@
 import random
-from ise_cdg_models.cnn2rnn.decoder.document_rnn import DocumentRNN
-from ise_cdg_models.cnn2rnn.encoder.source_image_cnn import SourceImageCNN
 import torch
 from torch import nn
 
+from ise_cdg_models.cnn2rnn.decoder import DocumentDecoder
+from ise_cdg_models.cnn2rnn.encoder import SourceImageEncoder
 
 
 
-class ParImageCaptionerArchitecture(nn.Module):
+class CNN2RNN(nn.Module):
     def __init__(
         self,
-        embed_size,
-        vocab_size,
-        rnn_module,
+        src_vocab_size,
+        src_embed_size,
+        md_embed_size,
+        md_vocab_size,
         hidden_size,
         image_output_size,
         conv_flatten_size,
-        ff_module,
-        output_size,
         glove_weights=None,
     ):
         super().__init__()
         if glove_weights is None:
-            embedding = nn.Embedding(embed_size, vocab_size)
+            embedding = nn.Embedding(md_embed_size, md_vocab_size)
         else:
             embedding = nn.Embedding.from_pretrained(glove_weights, freeze=False)
-        self.encoder = SourceImageCNN(image_output_size, conv_flatten_size)
-        self.decoder = DocumentRNN(embedding, vocab_size, embed_size, hidden_size, image_output_size)
-        self.embed_size = embed_size
-        self.hidden_size = hidden_size
-        self.image_output_size = image_output_size
-        self.output_size = output_size
+        self.encoder = SourceImageEncoder(image_output_size, conv_flatten_size, src_vocab_size, src_embed_size)
+        self.decoder = DocumentDecoder(embedding, md_vocab_size, md_embed_size, hidden_size, image_output_size)
 
     def forward(self, source, markdown, device,
             teacher_force_ratio=0.9):
