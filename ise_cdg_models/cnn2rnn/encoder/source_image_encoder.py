@@ -5,10 +5,10 @@ from torch import nn
 from ise_cdg_models.cnn2rnn.encoder.source_image_cnn import SourceImageCNN
 
 class SourceImageEncoder(nn.Module):
-    def __init__(self, context_size, conv_flatten_size, vocab_size, embedding_size):
+    def __init__(self, embedding, context_size, conv_flatten_size):
         super().__init__()
         self.dropout = nn.Dropout(0.5)
-        self.embedding = nn.Embedding(vocab_size, embedding_size)
+        self.embedding = embedding
         self.source_image_cnn = SourceImageCNN(context_size, conv_flatten_size)
 
     def forward(self, x):

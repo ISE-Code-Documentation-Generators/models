@@ -3,6 +3,7 @@ import torch
 from torch import nn
 
 from ise_cdg_models.cnn2rnn.decoder import DocumentDecoder
+from ise_cdg_models.cnn2rnn.embeddings import VocabEmbeddingHelper
 from ise_cdg_models.cnn2rnn.encoder import SourceImageEncoder
 
 
@@ -10,22 +11,26 @@ from ise_cdg_models.cnn2rnn.encoder import SourceImageEncoder
 class CNN2RNN(nn.Module):
     def __init__(
         self,
-        src_vocab_size,
-        src_embed_size,
-        md_embed_size,
-        md_vocab_size,
+        src_vocab,
+        md_vocab,
         hidden_size,
         image_output_size,
         conv_flatten_size,
         glove_weights=None,
     ):
         super().__init__()
-        if glove_weights is None:
-            embedding = nn.Embedding(md_embed_size, md_vocab_size)
-        else:
-            embedding = nn.Embedding.from_pretrained(glove_weights, freeze=False)
-        self.encoder = SourceImageEncoder(image_output_size, conv_flatten_size, src_vocab_size, src_embed_size)
-        self.decoder = DocumentDecoder(embedding, md_vocab_size, md_embed_size, hidden_size, image_output_size)
+        src_embed_size = 512
+        md_embed_size = 300
+        src_vocab_helper = VocabEmbeddingHelper(src_vocab)
+        md_vocab_helper = VocabEmbeddingHelper(md_vocab)
+        self.encoder = SourceImageEncoder(
+            src_vocab_helper.get_embedding(src_embed_size, src_vocab_helper.VectorsType.SIMPLE),
+            image_output_size, conv_flatten_size, 
+        )
+        self.decoder = DocumentDecoder(
+            md_vocab_helper.get_embedding(md_embed_size, md_vocab_helper.VectorsType.GLOVE_6B), 
+            md_vocab_helper.vocab_size, md_embed_size, hidden_size, image_output_size,
+        )
 
     def forward(self, source, markdown, device,
             teacher_force_ratio=0.9):
