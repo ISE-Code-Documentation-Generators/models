@@ -63,6 +63,7 @@ class CNN2RNNTesterOnDataset:
 
         for metric_name, metric in metrics_with_name.items():
             self.printer(f'x--- {metric_name} ---x')
+            metric.set_references(mds)
             self.printer(metric(candidates))
         self.printer()
         return candidates, mds

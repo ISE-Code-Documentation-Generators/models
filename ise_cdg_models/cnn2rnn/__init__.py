@@ -1,1 +1,1 @@
-from .joint import CNN2RNN
+from .joint import CNN2RNN, CNN2RNNTesterOnDataset
