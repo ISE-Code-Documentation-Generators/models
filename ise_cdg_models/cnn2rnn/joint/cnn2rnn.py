@@ -14,9 +14,8 @@ class CNN2RNN(nn.Module):
         src_vocab,
         md_vocab,
         hidden_size,
-        image_output_size,
+        encoder_context_size,
         conv_flatten_size,
-        glove_weights=None,
     ):
         super().__init__()
         src_embed_size = 512
@@ -25,7 +24,7 @@ class CNN2RNN(nn.Module):
         md_vocab_helper = VocabEmbeddingHelper(md_vocab)
         self.encoder = SourceImageEncoder(
             src_vocab_helper.get_embedding(src_embed_size, src_vocab_helper.VectorsType.SIMPLE),
-            image_output_size, conv_flatten_size, 
+            encoder_context_size, conv_flatten_size, 
         )
         self.decoder = DocumentDecoder(
             md_vocab_helper.get_embedding(md_embed_size, md_vocab_helper.VectorsType.GLOVE_6B), 
