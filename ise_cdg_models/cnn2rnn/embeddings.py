@@ -26,8 +26,7 @@ class VocabEmbeddingHelper:
             tokens_list = [
                 self.adaptee_vocab.get_itos()[i] for i in range(self.vocab_size)
             ]
-            vecs = glove_vocab.get_vecs_by_tokens(tokens_list)
-            glove_weights_subset = glove_vocab.vectors[vecs]
+            glove_weights_subset= glove_vocab.get_vecs_by_tokens(tokens_list)
             return nn.Embedding.from_pretrained(glove_weights_subset, freeze=False)
         elif vectors_type == self.VectorsType.SIMPLE:
             return nn.Embedding(self.vocab_size, embedding_size)
