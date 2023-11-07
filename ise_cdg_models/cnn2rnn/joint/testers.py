@@ -1,4 +1,5 @@
 import abc
+import random
 import typing
 from typing import List, Dict, Callable
 from ise_cdg_models.required_interfaces import MetricInterface
@@ -8,23 +9,23 @@ from torch.utils.data import Dataset
 
 
 if typing.TYPE_CHECKING:
-    from ise_cdg_models.a_conv_gnn.models import AConvGNN
+    from ise_cdg_models.cnn2rnn import CNN2RNN
 
 
-class AConvGNNTesterOnDataset:
+class CNN2RNNTesterOnDataset:
 
     def __init__(
             self, 
             name: str,
-            model: 'AConvGNN',
-            dataset: Dataset, 
-            geo_dataset: Dataset,
+            model: 'CNN2RNN',
+            dataset: Dataset,
+            md_vocab, 
             printer = print,
     ) -> None:
         self.name = name
         self.model = model
         self.dataset = dataset
-        self.geo_dataset = geo_dataset
+        self.md_vocab = md_vocab
         self.printer = printer
     
     def start_testing(
@@ -33,30 +34,35 @@ class AConvGNNTesterOnDataset:
             dataset_id_generator: Callable,
             sos_ind: int, eos_ind: int,
             device: torch.device,
+            example_ratio : float | None = None,
     ):
         self.printer(f'x---------- {self.name} Started Testing ----------x')
         self.model.eval()
+        examples_shown = 0
         with torch.no_grad():
             candidates = []
             mds = []
             for i in dataset_id_generator():
                 src, md = self.dataset[i]
                 src = src.unsqueeze(1).to(device)
-                data2 = self.geo_dataset[i]
-                data2 = data2.to(device)
-                batch = torch.zeros(data2.x.shape[0]).long().to(device)
                 output = self.model.generate_one_markdown(
                     src,
-                    data2.x.long(), data2.edge_index.long(), batch,
                     sos_ind, eos_ind,
-                    sequence_max_length=50,
+                    sequence_max_length=25,
                     device=device,
                 )
-                candidates.append([int(ind) for ind in output.tolist()])
-                mds.append(md)
-        
+                candidate = [int(ind) for ind in output.tolist()]
+                target = [int(ind) for ind in md.tolist()]
+                candidates.append(candidate)
+                mds.append(target)
+                if example_ratio is not None and random.random() < example_ratio:
+                    examples_shown += 1
+                    self.printer(f'x- example {examples_shown} -x')
+                    self.printer('\tReal:', ' '.join([self.md_vocab.get_itos()[tok_ind] for tok_ind in target]))
+                    self.printer('\tPredicted:', ' '.join([self.md_vocab.get_itos()[tok_ind] for tok_ind in candidate]))
+
         for metric_name, metric in metrics_with_name.items():
-            self.printer(f'x-- {metric_name} --x')
+            self.printer(f'x--- {metric_name} ---x')
             self.printer(metric(candidates))
         self.printer()
         return candidates, mds
