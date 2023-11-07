@@ -28,7 +28,7 @@ class CNN2RNN(nn.Module):
         )
         self.decoder = DocumentDecoder(
             md_vocab_helper.get_embedding(md_embed_size, md_vocab_helper.VectorsType.GLOVE_6B), 
-            md_vocab_helper.vocab_size, md_embed_size, hidden_size, image_output_size,
+            md_vocab_helper.vocab_size, md_embed_size, hidden_size, encoder_context_size,
         )
 
     def forward(self, source, markdown, device,
