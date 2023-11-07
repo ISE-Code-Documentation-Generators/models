@@ -19,8 +19,8 @@ class SourceImageCNN(nn.Module):
       )
 
       # see the forward function to understand the shapes
-      self.fc1 = nn.Linear(conv_flatten_size, 2048)
-      self.fc2 = nn.Linear(2048, 512)
+      # self.fc1 = nn.Linear(conv_flatten_size, 2048)
+      self.fc2 = nn.Linear(conv_flatten_size, 512)
       self.fc3 = nn.Linear(512, context_size)
 
       """
@@ -42,7 +42,7 @@ class SourceImageCNN(nn.Module):
         x = self.relu(self.conv3(x))
         x = self.pool(x)
         x = self.flatten(x)  # shape: (batch, flatten_size)
-        x = self.relu(self.fc1(x))
+        # x = self.relu(self.fc1(x))
         x = self.relu(self.fc2(x))
         x = self.relu(self.fc3(x))
         return self.dropout(x)  # shape: (batch, encoder_context_size)

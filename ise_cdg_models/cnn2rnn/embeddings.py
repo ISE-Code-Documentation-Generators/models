@@ -24,7 +24,7 @@ class VocabEmbeddingHelper:
         if vectors_type == self.VectorsType.GLOVE_6B:
             glove_vocab = vocab.GloVe(name="6B", dim=embedding_size)
             tokens_list = [
-                self.adaptee_vocab.get_itos(i) for i in range(self.vocab_size)
+                self.adaptee_vocab.get_itos()[i] for i in range(self.vocab_size)
             ]
             vecs = glove_vocab.get_vecs_by_tokens(tokens_list)
             glove_weights_subset = glove_vocab.vectors[vecs]
