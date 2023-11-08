@@ -22,6 +22,7 @@ class CNN2RNN(nn.Module):
         md_embed_size = 300
         src_vocab_helper = VocabEmbeddingHelper(src_vocab)
         md_vocab_helper = VocabEmbeddingHelper(md_vocab)
+        self.md_vocab_size = md_vocab_helper.vocab_size
         self.encoder = SourceImageEncoder(
             src_vocab_helper.get_embedding(src_embed_size, src_vocab_helper.VectorsType.SIMPLE),
             encoder_context_size, conv_flatten_size, 
