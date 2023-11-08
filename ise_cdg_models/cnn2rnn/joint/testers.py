@@ -2,6 +2,8 @@ import abc
 import random
 import typing
 from typing import List, Dict, Callable
+from torch.nn import functional as F
+
 from ise_cdg_models.required_interfaces import MetricInterface
 
 import torch
@@ -19,7 +21,8 @@ class CNN2RNNTesterOnDataset:
             name: str,
             model: 'CNN2RNN',
             dataset: Dataset,
-            md_vocab, 
+            md_vocab,
+            source_max_length,
             printer = print,
     ) -> None:
         self.name = name
@@ -27,7 +30,15 @@ class CNN2RNNTesterOnDataset:
         self.dataset = dataset
         self.md_vocab = md_vocab
         self.printer = printer
-    
+        self.source_max_length = source_max_length
+
+    def __pad_to_length(self, raw_input):
+        # raw_input.shape: (..., raw_input_length)
+        raw_input_length = raw_input.shape[0]
+        pad_length = self.source_max_length - raw_input_length
+        # shape: (..., expected_length)
+        return F.pad(raw_input, (0, 0, 0, pad_length), value=0)
+
     def start_testing(
             self,
             metrics_with_name: Dict[str, MetricInterface],
@@ -44,7 +55,7 @@ class CNN2RNNTesterOnDataset:
             mds = []
             for i in dataset_id_generator():
                 src, md = self.dataset[i]
-                src = src.unsqueeze(1).to(device)
+                src = self.__pad_to_length(src.unsqueeze(1).to(device))
                 output = self.model.generate_one_markdown(
                     src,
                     sos_ind, eos_ind,
