@@ -21,7 +21,7 @@ class DocumentDecoder(nn.Module):
 
     def forward(self, x, hidden, encoder_context):
         x = x.unsqueeze(0) 
-        encoder_context = encoder_context.unsqueeze(1)
+        encoder_context = encoder_context.unsqueeze(0)
         # x, hidden, encoder_context: (1, batch), (1, batch, hidden), (1, batch, encoder_context_size)
         embedding = self.dropout(self.embedding(x))  # : (1, batch, embed)
         rnn_inp = torch.cat((embedding, encoder_context), dim=2)
