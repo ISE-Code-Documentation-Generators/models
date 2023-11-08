@@ -17,6 +17,9 @@ class SourceImageCNN(nn.Module):
       self.conv3 = nn.Conv2d(
           in_channels=16, out_channels=24, **convolution_properties,
       )
+      self.conv4 = nn.Conv2d(
+          in_channels=24, out_channels=32, **convolution_properties,
+      )
 
       # see the forward function to understand the shapes
       # self.fc1 = nn.Linear(conv_flatten_size, 2048)
@@ -40,6 +43,8 @@ class SourceImageCNN(nn.Module):
         x = self.relu(self.conv2(x))
         x = self.pool(x)
         x = self.relu(self.conv3(x))
+        x = self.pool(x)
+        x = self.relu(self.conv4(x))
         x = self.pool(x)
         x = self.flatten(x)  # shape: (batch, flatten_size)
         # x = self.relu(self.fc1(x))
