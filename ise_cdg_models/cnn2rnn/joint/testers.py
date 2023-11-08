@@ -34,7 +34,7 @@ class CNN2RNNTesterOnDataset:
             dataset_id_generator: Callable,
             sos_ind: int, eos_ind: int,
             device: torch.device,
-            example_ratio : float | None = None,
+            example_ratio : typing.Union[float, None] = None,
     ):
         self.printer(f'x---------- {self.name} Started Testing ----------x')
         self.model.eval()
