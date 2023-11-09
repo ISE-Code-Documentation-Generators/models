@@ -69,12 +69,12 @@ class CNN2RNNTesterOnDataset:
                 if example_ratio is not None and random.random() < example_ratio:
                     examples_shown += 1
                     self.printer(f'x- example {examples_shown} -x')
-                    self.printer('\tReal:', ' '.join([self.md_vocab.get_itos()[tok_ind] for tok_ind in target]))
-                    self.printer('\tPredicted:', ' '.join([self.md_vocab.get_itos()[tok_ind] for tok_ind in candidate]))
+                    self.printer('\tReal: ' + ' '.join([self.md_vocab.get_itos()[tok_ind] for tok_ind in target]))
+                    self.printer('\tPredicted: ' + ' '.join([self.md_vocab.get_itos()[tok_ind] for tok_ind in candidate]))
 
         for metric_name, metric in metrics_with_name.items():
             self.printer(f'x--- {metric_name} ---x')
             metric.set_references(mds)
             self.printer(metric(candidates))
-        self.printer()
+        self.printer('')
         return candidates, mds
