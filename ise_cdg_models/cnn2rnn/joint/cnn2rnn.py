@@ -16,6 +16,7 @@ class CNN2RNN(nn.Module):
         hidden_size,
         encoder_context_size,
         conv_flatten_size,
+        use_glove=True,
     ):
         super().__init__()
         src_embed_size = 512
@@ -27,8 +28,9 @@ class CNN2RNN(nn.Module):
             src_vocab_helper.get_embedding(src_embed_size, src_vocab_helper.VectorsType.SIMPLE),
             encoder_context_size, conv_flatten_size, 
         )
+        decoder_vectype = md_vocab_helper.VectorsType.GLOVE_6B if use_glove else md_vocab_helper.VectorsType.SIMPLE
         self.decoder = DocumentDecoder(
-            md_vocab_helper.get_embedding(md_embed_size, md_vocab_helper.VectorsType.GLOVE_6B), 
+            md_vocab_helper.get_embedding(md_embed_size, decoder_vectype), 
             md_vocab_helper.vocab_size, md_embed_size, hidden_size, encoder_context_size,
         )
 
