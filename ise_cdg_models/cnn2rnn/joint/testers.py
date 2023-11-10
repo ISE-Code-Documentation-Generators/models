@@ -65,7 +65,7 @@ class CNN2RNNTesterOnDataset:
                 candidate = [int(ind) for ind in output.tolist()]
                 target = [int(ind) for ind in md.tolist()]
                 candidates.append(candidate)
-                mds.append(target)
+                mds.append([target])
                 if example_ratio is not None and random.random() < example_ratio:
                     examples_shown += 1
                     self.printer(f'x- example {examples_shown} -x')
