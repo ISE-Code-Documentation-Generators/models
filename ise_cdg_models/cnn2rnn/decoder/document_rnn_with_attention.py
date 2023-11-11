@@ -19,7 +19,7 @@ class DocumentDecoderAttention(nn.Module):
             embed_size + encoder_hidden_size, hidden_size,
         )
         self.fc1 = nn.Linear(hidden_size, vocab_size)
-        self.attention = BeforeRNNAttention(ehs=hidden_size, dhs=hidden_size)
+        self.attention = BeforeRNNAttention(ehs=encoder_hidden_size, dhs=hidden_size)
     
 
     def forward(self, x, hidden, encoder_output):
