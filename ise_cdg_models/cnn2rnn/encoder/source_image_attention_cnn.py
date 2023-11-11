@@ -46,8 +46,9 @@ class SourceImageAttentionCNN(nn.Module):
             x = self.pool(self.tanh(conv_kernel(x)))
 
         context = self.context_flatten(x) # : (batch, kernel_out x seq_len_remain x embedding_size_remain)
+        output = self.output_flatten(x)
         for fc_id in range(1, 5):
             fc = getattr(self, f'fc{fc_id}')
             context = self.relu(fc(context))
 
-        return self.dropout(x), self.dropout(context)  # : (batch, kernel_out, seq_len_remain x embedding_size_remain) , (batch, encoder_context_size),
+        return self.dropout(output), self.dropout(context)  # : (batch, kernel_out, seq_len_remain x embedding_size_remain) , (batch, encoder_context_size),
