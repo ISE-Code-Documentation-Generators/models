@@ -43,7 +43,7 @@ class SourceImageAttentionCNN(nn.Module):
         x = x.unsqueeze(1)  # shape: [batch, 1, seq_len, embedding_size]
         for conv_id in range(1, 4):
             conv_kernel = getattr(self, f'conv{conv_id}')
-            x = self.tanh(conv_kernel(x))
+            x = self.pool(self.tanh(conv_kernel(x)))
 
         context = self.context_flatten(x) # : (batch, kernel_out x seq_len_remain x embedding_size_remain)
         for fc_id in range(1, 5):
