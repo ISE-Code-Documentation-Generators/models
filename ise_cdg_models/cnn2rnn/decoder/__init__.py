@@ -1,1 +1,2 @@
 from .document_rnn import DocumentDecoder
+from .document_rnn_with_attention import DocumentDecoderAttention

@@ -2,6 +2,7 @@ import abc
 import random
 import typing
 from typing import List, Dict, Callable
+from sympy import im
 from torch.nn import functional as F
 
 from ise_cdg_models.required_interfaces import MetricInterface
@@ -11,7 +12,7 @@ from torch.utils.data import Dataset
 
 
 if typing.TYPE_CHECKING:
-    from ise_cdg_models.cnn2rnn import CNN2RNN
+    from ise_cdg_models.cnn2rnn import CNN2RNN, CNN2RNNAttention
 
 
 class CNN2RNNTesterOnDataset:
@@ -19,7 +20,7 @@ class CNN2RNNTesterOnDataset:
     def __init__(
             self, 
             name: str,
-            model: 'CNN2RNN',
+            model: typing.Union['CNN2RNN', 'CNN2RNNAttention'],
             dataset: Dataset,
             md_vocab,
             source_max_length,

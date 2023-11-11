@@ -1,6 +1,7 @@
 
 import torch
 from torch import nn
+from ise_cdg_models.cnn2rnn.encoder.source_image_attention_cnn import SourceImageAttentionCNN
 
 from ise_cdg_models.cnn2rnn.encoder.source_image_cnn import SourceImageCNN
 
@@ -17,3 +18,20 @@ class SourceImageEncoder(nn.Module):
         x = torch.einsum('sbe->bse', x)
         context = self.source_image_cnn(x) # : (batch, encoder_context_size)
         return context
+    
+
+class SourceImageAttentionBasedEncoder(nn.Module):
+    def __init__(self, embedding):
+        super().__init__()
+        self.dropout = nn.Dropout(0.5)
+        self.embedding = embedding
+        self.source_image_cnn = SourceImageAttentionCNN()
+
+    def forward(self, x):
+        # x.shape: [seq_len, batch]
+        x = self.dropout(self.embedding(x)) # : [seq_len, batch, embedding_size]
+        x = torch.einsum('sbe->bse', x)
+        output, context = self.source_image_cnn(x)
+        output = torch.einsum('bsh->sbh', output) # : (fake_seq_len, batch, fake_hidden_size)
+        context = context.unsqueeze(0) # : (1, b, conv_flatten_size)
+        return output, context
