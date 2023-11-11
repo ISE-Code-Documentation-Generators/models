@@ -4,7 +4,7 @@ from torch import nn
 
 from ise_cdg_models.cnn2rnn.decoder import DocumentDecoderAttention
 from ise_cdg_models.cnn2rnn.embeddings import VocabEmbeddingHelper
-from ise_cdg_models.cnn2rnn.encoder import SourceImageAttentionBasedEncoder
+from ise_cdg_models.cnn2rnn.encoder import SourceImageAttentionBasedEncoder, SourceImageAttentionBasedEncoderV2
 
 
 
@@ -13,15 +13,18 @@ class CNN2RNNAttention(nn.Module):
         self,
         src_vocab,
         md_vocab,
-        use_glove=True,
+        use_glove: bool = True,
+        version: int = 1,
     ):
+        assert version in [1, 2]
         super().__init__()
         src_embed_size = 320
         md_embed_size = 300
         src_vocab_helper = VocabEmbeddingHelper(src_vocab)
         md_vocab_helper = VocabEmbeddingHelper(md_vocab)
         self.md_vocab_size = md_vocab_helper.vocab_size
-        self.encoder = SourceImageAttentionBasedEncoder(
+        encoder_module = SourceImageAttentionBasedEncoder if version == 1 else SourceImageAttentionBasedEncoderV2
+        self.encoder = encoder_module(
             src_vocab_helper.get_embedding(src_embed_size, src_vocab_helper.VectorsType.SIMPLE),
         )
         decoder_vectype = md_vocab_helper.VectorsType.GLOVE_6B if use_glove else md_vocab_helper.VectorsType.SIMPLE

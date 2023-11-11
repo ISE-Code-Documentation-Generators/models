@@ -1,2 +1,3 @@
-from .source_image_encoder import SourceImageEncoder, SourceImageAttentionBasedEncoder
+from .source_image_encoder import SourceImageEncoder, SourceImageAttentionBasedEncoder, SourceImageAttentionBasedEncoderV2
+
 
