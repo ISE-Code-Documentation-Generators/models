@@ -39,7 +39,7 @@ class CNN2RNNFeatures(nn.Module):
             md_vocab_helper.vocab_size, md_embed_size, hidden_size, encoder_context_size,
         )
 
-    def forward(self, source, markdown, features, device,
+    def forward(self, source, features, markdown, device,
             teacher_force_ratio=0.9):
         batch_size = source.shape[1]
         target_sequence_len = markdown.shape[0]
