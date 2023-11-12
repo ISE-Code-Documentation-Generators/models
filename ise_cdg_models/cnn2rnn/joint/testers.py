@@ -121,7 +121,7 @@ class CNN2RNNFeaturesTesterOnDataset:
             for i in dataset_id_generator():
                 src, features, md = self.dataset[i]
                 src = self.__pad_to_length(src.unsqueeze(1).to(device))
-                features = features.unsqueeze(0)
+                features = features.unsqueeze(0).to(device)
                 output = self.model.generate_one_markdown(
                     src, features,
                     sos_ind, eos_ind,
