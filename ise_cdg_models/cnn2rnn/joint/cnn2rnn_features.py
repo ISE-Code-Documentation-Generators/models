@@ -7,7 +7,7 @@ from ise_cdg_models.cnn2rnn.embeddings import VocabEmbeddingHelper
 from ise_cdg_models.cnn2rnn.encoder import SourceImageEncoder
 from ise_cdg_models.cnn2rnn.encoder.features_encoder import FeaturesEncoder
 
-class CNN2RNNWithFeatures(nn.Module):
+class CNN2RNNFeatures(nn.Module):
     def __init__(
         self,
         src_vocab,
