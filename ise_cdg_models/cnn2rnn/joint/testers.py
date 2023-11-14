@@ -88,10 +88,11 @@ class CNN2RNNFeaturesTesterOnDataset:
     def __init__(
             self, 
             name: str,
-            model: 'CNN2RNNFeatures',
+            model: typing.Union['CNN2RNN', 'CNN2RNNAttention', 'CNN2RNNFeatures'],
             dataset: Dataset,
             md_vocab,
             source_max_length,
+            send_features=True,
             printer = print,
     ) -> None:
         self.name = name
@@ -100,6 +101,7 @@ class CNN2RNNFeaturesTesterOnDataset:
         self.md_vocab = md_vocab
         self.printer = printer
         self.source_max_length = source_max_length
+        self.send_features = send_features
 
     def __pad_to_length(self, raw_input):
         # raw_input.shape: (..., raw_input_length)
@@ -126,12 +128,22 @@ class CNN2RNNFeaturesTesterOnDataset:
                 src, features, md = self.dataset[i]
                 src = self.__pad_to_length(src.unsqueeze(1).to(device))
                 features = features.unsqueeze(0).to(device)
-                output = self.model.generate_one_markdown(
-                    src, features,
-                    sos_ind, eos_ind,
-                    sequence_max_length=25,
-                    device=device,
-                )
+                if self.send_features:
+                    model: 'CNN2RNNFeatures' = self.model
+                    output = model.generate_one_markdown(
+                        src, features,
+                        sos_ind, eos_ind,
+                        sequence_max_length=25,
+                        device=device,
+                    )
+                else:
+                    model: typing.Union['CNN2RNN', 'CNN2RNNAttention'] = self.model
+                    output = model.generate_one_markdown(
+                        src,
+                        sos_ind, eos_ind,
+                        sequence_max_length=25,
+                        device=device,
+                    )
                 candidate = [int(ind) for ind in output.tolist()]
                 target = [int(ind) for ind in md.tolist()]
                 candidates.append(candidate)
