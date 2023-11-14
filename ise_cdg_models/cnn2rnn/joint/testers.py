@@ -81,8 +81,9 @@ class CNN2RNNTesterOnDataset:
             self.printer(str(result))
             metric_results[metric_name] = result
         self.printer('')
-        return candidates, mds, metric_results
-    
+        return metric_results, candidates, mds
+
+
 class CNN2RNNFeaturesTesterOnDataset:
     def __init__(
             self, 
@@ -149,4 +150,4 @@ class CNN2RNNFeaturesTesterOnDataset:
             self.printer(str(result))
             metric_results[metric_name] = result
         self.printer('')
-        return candidates, mds, metric_results
+        return metric_results, candidates, mds
