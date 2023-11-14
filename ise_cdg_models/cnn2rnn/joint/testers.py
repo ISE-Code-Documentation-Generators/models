@@ -73,12 +73,15 @@ class CNN2RNNTesterOnDataset:
                     self.printer('\tReal: ' + ' '.join([self.md_vocab.get_itos()[tok_ind] for tok_ind in target]))
                     self.printer('\tPredicted: ' + ' '.join([self.md_vocab.get_itos()[tok_ind] for tok_ind in candidate]))
 
+        metric_results = {}
         for metric_name, metric in metrics_with_name.items():
             self.printer(f'x--- {metric_name} ---x')
             metric.set_references(mds)
-            self.printer(str(metric(candidates)))
+            result = metric(candidates)
+            self.printer(str(result))
+            metric_results[metric_name] = result
         self.printer('')
-        return candidates, mds
+        return candidates, mds, metric_results
     
 class CNN2RNNFeaturesTesterOnDataset:
     def __init__(
@@ -137,10 +140,13 @@ class CNN2RNNFeaturesTesterOnDataset:
                     self.printer(f'x- example {examples_shown} -x')
                     self.printer('\tReal: ' + ' '.join([self.md_vocab.get_itos()[tok_ind] for tok_ind in target]))
                     self.printer('\tPredicted: ' + ' '.join([self.md_vocab.get_itos()[tok_ind] for tok_ind in candidate]))
-
+        
+        metric_results = {}
         for metric_name, metric in metrics_with_name.items():
             self.printer(f'x--- {metric_name} ---x')
             metric.set_references(mds)
-            self.printer(str(metric(candidates)))
+            result = metric(candidates)
+            self.printer(str(result))
+            metric_results[metric_name] = result
         self.printer('')
-        return candidates, mds
+        return candidates, mds, metric_results
