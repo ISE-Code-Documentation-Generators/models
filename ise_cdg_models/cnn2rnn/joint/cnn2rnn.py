@@ -33,6 +33,13 @@ class CNN2RNN(nn.Module):
             md_vocab_helper.get_embedding(md_embed_size, decoder_vectype), 
             md_vocab_helper.vocab_size, md_embed_size, hidden_size, encoder_context_size,
         )
+        self.parallel = False
+
+    def make_parallel(self):
+        if not self.parallel:
+            self.encoder = nn.DataParallel(self.encoder)
+            self.decoder = nn.DataParallel(self.decoder)
+            self.parallel = True
 
     def forward(self, source, markdown, device,
             teacher_force_ratio=0.9):
