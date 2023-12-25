@@ -24,22 +24,17 @@ class CNN2RNN(nn.Module):
         src_vocab_helper = VocabEmbeddingHelper(src_vocab)
         md_vocab_helper = VocabEmbeddingHelper(md_vocab)
         self.md_vocab_size = md_vocab_helper.vocab_size
-        self.encoder = SourceImageEncoder(
-            src_vocab_helper.get_embedding(src_embed_size, src_vocab_helper.VectorsType.SIMPLE),
-            encoder_context_size, conv_flatten_size, 
+        self.encoder = nn.DataParallel(
+            SourceImageEncoder(
+                src_vocab_helper.get_embedding(src_embed_size, src_vocab_helper.VectorsType.SIMPLE),
+                encoder_context_size, conv_flatten_size)
         )
         decoder_vectype = md_vocab_helper.VectorsType.GLOVE_6B if use_glove else md_vocab_helper.VectorsType.SIMPLE
-        self.decoder = DocumentDecoder(
-            md_vocab_helper.get_embedding(md_embed_size, decoder_vectype), 
-            md_vocab_helper.vocab_size, md_embed_size, hidden_size, encoder_context_size,
+        self.decoder = nn.DataParallel(
+            DocumentDecoder(
+                md_vocab_helper.get_embedding(md_embed_size, decoder_vectype), 
+                md_vocab_helper.vocab_size, md_embed_size, hidden_size, encoder_context_size,)
         )
-        self.parallel = False
-
-    def make_parallel(self):
-        if not self.parallel:
-            self.encoder = nn.DataParallel(self.encoder)
-            self.decoder = nn.DataParallel(self.decoder)
-            self.parallel = True
 
     def forward(self, source, markdown, device,
             teacher_force_ratio=0.9):
