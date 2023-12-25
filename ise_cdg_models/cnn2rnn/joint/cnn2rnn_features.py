@@ -42,7 +42,8 @@ class CNN2RNNFeatures(nn.Module):
 
     def make_parallel(self):
         if not self.parallel:
-            self.encoder = nn.DataParallel(self.encoder)
+            self.source_image_encoder = nn.DataParallel(self.source_image_encoder)
+            self.features_encoder = nn.DataParallel(self.features_encoder)
             self.decoder = nn.DataParallel(self.decoder)
             self.parallel = True
 
