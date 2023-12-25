@@ -26,22 +26,16 @@ class CNN2RNNFeatures(nn.Module):
         md_vocab_helper = VocabEmbeddingHelper(md_vocab)
         self.md_vocab_size = md_vocab_helper.vocab_size
         
-        self.source_image_encoder = nn.DataParallel(
-            SourceImageEncoder(
+        self.source_image_encoder = SourceImageEncoder(
                 src_vocab_helper.get_embedding(src_embed_size, src_vocab_helper.VectorsType.SIMPLE),
                 source_image_context_size, conv_flatten_size, )
-        )
-        self.features_encoder = nn.DataParallel(
-            FeaturesEncoder(features_length, features_context_size)
-        )
+        self.features_encoder = FeaturesEncoder(features_length, features_context_size)
 
         encoder_context_size = source_image_context_size + features_context_size
         decoder_vectype = md_vocab_helper.VectorsType.GLOVE_6B if use_glove else md_vocab_helper.VectorsType.SIMPLE
-        self.decoder = nn.DataParallel(
-            DocumentDecoder(
+        self.decoder = DocumentDecoder(
                 md_vocab_helper.get_embedding(md_embed_size, decoder_vectype), 
                 md_vocab_helper.vocab_size, md_embed_size, hidden_size, encoder_context_size,)
-        )
 
     def forward(self, source, features, markdown, device,
             teacher_force_ratio=0.9):
