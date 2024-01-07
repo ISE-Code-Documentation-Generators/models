@@ -47,7 +47,7 @@ class CNN2RNNFeatures(nn.Module):
             target_sequence_len, batch_size, target_vocab_size
         ).to(device)
         
-        code_image_context = self.source_image_encoder(source) # shape: (batch, source_image_context_size)
+        code_image_context = self.source_image_encoder(source) # shape: (source_image_context_size, batch)
         features_context = self.features_encoder(features) # shape: (batch, features_context_size)
         encoder_context = torch.cat((code_image_context, features_context), dim=1) # shape: (batch, context_size)
         

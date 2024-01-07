@@ -1,6 +1,7 @@
 from turtle import forward
 import typing
 from torch import nn
+import torch
 
 
 class FeaturesEncoder(nn.Module):
@@ -12,9 +13,10 @@ class FeaturesEncoder(nn.Module):
         self.relu = nn.ReLU()
 
     def forward(self, features):
-        # features.shape: (batch, features_length)
+        # features.shape: (features_length, batch)
         print("FeaturesEncoder")
         print(features.shape)
+        features = torch.einsum('be->eb', features) 
         features = self.dropout(features)
         features = self.relu(self.fc1(features))
         print(features.shape)
