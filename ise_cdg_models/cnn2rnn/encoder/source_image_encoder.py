@@ -13,7 +13,6 @@ class SourceImageEncoder(nn.Module):
 
     def forward(self, x: "torch.Tensor"):
         # x.shape: [seq_len, batch]
-        print(x.shape)
         x = self.dropout(self.embedding(x)) # : [seq_len, batch, embedding_size]
         x = torch.einsum('sbe->bse', x) # : [batch, seq_len, embedding_size]
         context = self.source_image_cnn(x) # : (batch, encoder_context_size)

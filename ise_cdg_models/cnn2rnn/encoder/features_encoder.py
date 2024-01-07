@@ -14,11 +14,8 @@ class FeaturesEncoder(nn.Module):
 
     def forward(self, features):
         # features.shape: (features_length, batch)
-        print("FeaturesEncoder")
-        print(features.shape)
         features = torch.einsum('be->eb', features) 
         features = self.dropout(features)
         features = self.relu(self.fc1(features))
-        print(features.shape)
         features = self.relu(self.fc2(features))
         return features
