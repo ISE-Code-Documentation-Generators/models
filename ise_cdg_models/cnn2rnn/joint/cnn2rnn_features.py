@@ -1,3 +1,4 @@
+from ast import arg
 import random
 import torch
 from torch import nn
@@ -36,8 +37,13 @@ class CNN2RNNFeatures(nn.Module):
         self.decoder = DocumentDecoder(
                 md_vocab_helper.get_embedding(md_embed_size, decoder_vectype), 
                 md_vocab_helper.vocab_size, md_embed_size, hidden_size, encoder_context_size,)
+        
+    def forward(self, one_markdown: bool, *args, **kwargs):
+        if one_markdown:
+            return self.generate_one_markdown(*args, **kwargs)
+        return self.forward_for_batch(*args, **kwargs)
 
-    def forward(self, source, features, markdown, device,
+    def forward_for_batch(self, source, features, markdown, device,
             teacher_force_ratio=0.9):
         batch_size = source.shape[1]
         target_sequence_len = markdown.shape[0]
