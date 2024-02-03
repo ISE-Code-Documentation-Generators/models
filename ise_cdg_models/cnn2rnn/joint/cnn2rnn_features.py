@@ -38,8 +38,8 @@ class CNN2RNNFeatures(nn.Module):
                 md_vocab_helper.get_embedding(md_embed_size, decoder_vectype), 
                 md_vocab_helper.vocab_size, md_embed_size, hidden_size, encoder_context_size,)
         
-    def forward(self, one_markdown: bool, *args, **kwargs):
-        if one_markdown:
+    def forward(self, one_markdown: torch.Tensor, *args, **kwargs):
+        if one_markdown[0]:
             return self.generate_one_markdown(*args, **kwargs)
         return self.forward_for_batch(*args, **kwargs)
 
