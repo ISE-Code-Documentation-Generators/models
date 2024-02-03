@@ -32,12 +32,7 @@ class CNN2RNN(nn.Module):
                 md_vocab_helper.get_embedding(md_embed_size, decoder_vectype), 
                 md_vocab_helper.vocab_size, md_embed_size, hidden_size, encoder_context_size,)
     
-    def forward(self, one_markdown: torch.Tensor, *args, **kwargs):
-        if one_markdown[0][0]:
-            return self.generate_one_markdown(*args, **kwargs)
-        return self.forward_for_batch(*args, **kwargs)
-
-    def forward_for_batch(self, source, markdown, device,
+    def forward(self, source, markdown, device,
             teacher_force_ratio=0.9):
         batch_size = source.shape[1]
         target_sequence_len = markdown.shape[0]
